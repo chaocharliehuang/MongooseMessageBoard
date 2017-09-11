@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Dojo Message Board</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            .errors {
+                color: red;
+            }
+
+            .comments {
+                margin-left: 40px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>The Dojo Message Board</h1>
+        <hr>
+        <% if (typeof(errors) != 'undefined') { %>
+            <div class="errors">
+                <h4>ERRORS:</h4>
+                <% for (var error in errors) { %>
+                    <p><%= errors[error].message %></p>
+                <% } %>
+            </div>
+        <% } %>
+        <form action="/messages" method="post">
+            <p>
+                <label for="name">Name: </label>
+                <input type="text" name="name" id="name" value=<%= prefill.name %>>
+            </p>
+            <p>
+                <label for="message">Message: </label>
+                <br>
+                <textarea name="message" id="message" cols="30" rows="5"><%= prefill.message %></textarea>
+            </p>
+            <input type="submit" value="Post message">
+        </form>
+        <hr>
+        <% for (var message of messages) { %>
+            <h3>Name: <%= message.name %></h3>
+            <h3>Message: <%= message.message %></h3>
+            <div class="comments">
+                <% if (typeof(commentErrors) != 'undefined' && commentErrors.messageID == message._id) { %>
+                    <div class="errors">
+                        <h4>ERRORS:</h4>
+                        <% for (var commentError in commentErrors.commentErrors) { %>
+                            <p><%= commentErrors.commentErrors[commentError].message %></p>
+                        <% } %>
+                    </div>
+                <% } %>
+                <% if (message.comments.length !== 0) { %>
+                    <% for (var comment of message.comments) { %>
+                        <p>Name: <%= comment.name %></p>
+                        <p>Comment: <%= comment.comment %></p>
+                        <br>
+                    <% } %>
+                <% } %>
+                <form action="/messages/<%= message._id %>" method="post">
+                    <p>
+                        <label for="name">Name: </label>
+                        <input type="text" name="name" id="name">
+                    </p>
+                    <p>
+                        <label for="comment">Comment: </label>
+                        <br>
+                        <textarea name="comment" id="comment" cols="30" rows="5"></textarea>
+                    </p>
+                    <input type="submit" value="Post comment">
+                </form>
+            </div>
+            <hr>
+        <% } %>
+    </body>
+</html>
